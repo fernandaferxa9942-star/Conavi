@@ -15,11 +15,14 @@ def status():
     except:
         pass
 
-    return jsonify({
-        "up": up,
-        "time": time.strftime("%Y-%m-%d %H:%M:%S")
-    })
+    return jsonify({"up": up, "time": time.strftime("%Y-%m-%d %H:%M:%S")})
 
 @app.route("/")
 def index():
     return send_from_directory(".", "index.html")
+
+# 👇 MUY IMPORTANTE PARA RENDER
+import os
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
