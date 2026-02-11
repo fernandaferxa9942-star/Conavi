@@ -1,19 +1,33 @@
 <!DOCTYPE html>
-<html>
-<body style="background:black;color:white;text-align:center;font-size:30px;">
-<h1>Monitor CONAVI</h1>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Monitor CONAVI</title>
+<style>
+body { background:black; color:white; text-align:center; font-family:sans-serif; }
+#estado { font-size:50px; margin:20px; }
+#hora { font-size:20px; }
+</style>
+</head>
+<body>
+<h1>Monitor CURP CONAVI</h1>
 <div id="estado">Cargando...</div>
 <div id="hora"></div>
 
 <script>
 async function load(){
-  let r = await fetch("/status");
-  let d = await r.json();
-  document.getElementById("estado").innerHTML = d.up ? "🟢 ACTIVO" : "🔴 CAIDO";
-  document.getElementById("hora").innerHTML = "Última hora: " + d.time;
+    try {
+        let r = await fetch("/status");
+        let d = await r.json();
+        document.getElementById("estado").innerHTML = d.curp_responde ? "🟢 CURP FUNCIONA" : "🔴 CURP CAÍDO";
+        document.getElementById("hora").innerHTML = "Última verificación: " + d.hora;
+    } catch(e){
+        document.getElementById("estado").innerHTML = "❌ ERROR";
+        document.getElementById("hora").innerHTML = "";
+    }
 }
 load();
-setInterval(load,5000);
+setInterval(load, 5000);
 </script>
 </body>
 </html>
