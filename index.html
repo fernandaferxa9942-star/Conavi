@@ -2,32 +2,57 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Monitor CONAVI</title>
+<title>Monitor CURP CONAVI</title>
 <style>
 body { background:black; color:white; text-align:center; font-family:sans-serif; }
-#estado { font-size:50px; margin:20px; }
+#estado { font-size:50px; margin:20px; transition: all 0.5s; }
 #hora { font-size:20px; }
+#alert { font-size:30px; color:yellow; margin-top:20px; display:none; }
 </style>
 </head>
 <body>
 <h1>Monitor CURP CONAVI</h1>
 <div id="estado">Cargando...</div>
 <div id="hora"></div>
+<div id="alert">✅ CURP ahora FUNCIONA!</div>
+
+<audio id="alertSound" src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg" preload="auto"></audio>
 
 <script>
+let prevStatus = false;
+
 async function load(){
     try {
         let r = await fetch("/status");
         let d = await r.json();
-        document.getElementById("estado").innerHTML = d.curp_responde ? "🟢 CURP FUNCIONA" : "🔴 CURP CAÍDO";
-        document.getElementById("hora").innerHTML = "Última verificación: " + d.hora;
+
+        const estadoEl = document.getElementById("estado");
+        const horaEl = document.getElementById("hora");
+        const alertEl = document.getElementById("alert");
+        const sound = document.getElementById("alertSound");
+
+        // Actualiza estado
+        estadoEl.innerHTML = d.curp_responde ? "🟢 CURP FUNCIONA" : "🔴 CURP CAÍDO";
+        horaEl.innerHTML = "Última verificación: " + d.hora;
+
+        // Si cambia de caída → activo
+        if(d.curp_responde && !prevStatus){
+            alertEl.style.display = "block";   // muestra alerta
+            sound.play();                       // reproduce sonido
+        } else {
+            alertEl.style.display = "none";
+        }
+
+        prevStatus = d.curp_responde;
+
     } catch(e){
         document.getElementById("estado").innerHTML = "❌ ERROR";
         document.getElementById("hora").innerHTML = "";
     }
 }
+
 load();
-setInterval(load, 5000);
+setInterval(load, 5000);  // revisa cada 5s
 </script>
 </body>
 </html>
