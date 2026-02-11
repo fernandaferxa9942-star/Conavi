@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<body style="background:black;color:white;text-align:center;font-size:30px;">
+<h1>Monitor CONAVI</h1>
+<div id="estado">Cargando...</div>
+<div id="hora"></div>
+
+<script>
+async function load(){
+  let r = await fetch("/status");
+  let d = await r.json();
+  document.getElementById("estado").innerHTML = d.up ? "🟢 ACTIVO" : "🔴 CAIDO";
+  document.getElementById("hora").innerHTML = "Última hora: " + d.time;
+}
+load();
+setInterval(load,5000);
+</script>
+</body>
+</html>
